@@ -14,9 +14,50 @@ export const addCategory = createAsyncThunk(
     'categorySlice/addCategory',
     async(form) => {
         const res = await axios.post(`/category/create`, form)
-        console.log(res)
+        return res.data
     }
 )
+
+const buildNewCategories = (parentId, categories, category) => {
+    let myCategories= []
+    if(parentId == 'undefined')
+    {
+        return [
+            ...categories,
+            {
+                _id: category._id,
+                name: category.name,
+                slug: category.slug,
+                children: [],
+            }
+        ]
+    }
+    
+    for(let cat of categories)
+    {
+        if(cat._id == parentId){
+            myCategories.push({
+                ...cat,
+                children: cat.children ? buildNewCategories(parentId, [...cat.children, {
+                    _id: category._id,
+                    name: category.name,
+                    slug: category.slug,
+                    parentId: category.parentId,
+                    children: category.children
+                }], category) : []
+            })
+        }
+        else
+        {
+            myCategories.push({
+                ...cat,
+                children: cat.children? buildNewCategories(parentId, cat.children, category) : []
+            })
+        }
+       
+    }
+    return myCategories
+}
 
 const initialState= {
     categories: [],
@@ -30,25 +71,38 @@ export const categorySlice = createSlice({
     name: 'categorySlice',
     initialState,
     reducers: {
+        getInitialCategory: (state, action) => {
+            console.log(action.payload)
+            console.log(state)
+            state.categories = action.payload.categories
+            // state.loading = false
+        }
     },
     extraReducers: (builder) => {
         builder.addCase(getAllCategory.pending, (state, action) => {
             state.loading = true;
         })
         builder.addCase(getAllCategory.fulfilled, (state,action) => {
-            console.log(action.payload)
             state.categories = [...action.payload.categoryList]
             state.loading = false
-            // state = {
-            //     ...state,
-            //     categories: [...action.payload.categoryList],
-            //     loading: false
-            // }
-            // console.log(state)
+        })
+        builder.addCase(addCategory.pending, (state, action) => {
+            state.loading = true;
+        })
+        builder.addCase(addCategory.fulfilled, (state,action) => {
+            console.log(action.payload)
+            const category = action.payload.category;
+            console.log(category)
+            const updatedCategories = buildNewCategories(category.parentId, state.categories, category)
+            state.loading = false
+            state.categories = updatedCategories
+            
+            console.log(state.categories)
+            // state.categories = 
         })
     }
 })
 
-// export const {signout} = userSlice.actions
+export const {getInitialCategory} = categorySlice.actions
   
 export default categorySlice.reducer

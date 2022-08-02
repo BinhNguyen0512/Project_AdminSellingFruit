@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Col, Container, Modal, Row } from 'react-bootstrap'
+import { Button, Col, Container, Row } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import Layout from '../../components/Layout'
 import { addCategory, getAllCategory } from '../../slice/categorySlice'
 import Input from '../../components/UI/Input'
+import Modal from '../../components/UI/Modal'
 
 const Category = (props) => {
     const dispatch = useDispatch();
@@ -13,7 +14,6 @@ const Category = (props) => {
     const [parentCategoryId, setParentCategoryId] = useState()
     const [categoryImage, setCategoryImage] = useState()
     useEffect(() => {
-        dispatch(getAllCategory())
     }, [])
     
     const renderCategories = (categoriesList) => {
@@ -30,7 +30,6 @@ const Category = (props) => {
                 </li>
             )
         }
-
         return categories
     }
 
@@ -41,12 +40,8 @@ const Category = (props) => {
         form.append('parentId', parentCategoryId)
         form.append('categoryImage', categoryImage)
         dispatch(addCategory(form))
-        // const cat = {
-        //     categoryName,
-        //     parentCategoryId,
-        //     categoryImage
-        // }
-        // console.log(cat)
+        setCategoryName('')
+        setParentCategoryId('')
         setShow(false)
     }
 
@@ -72,8 +67,9 @@ const Category = (props) => {
     const handleCategoryImage =(e) => {
         setCategoryImage(e.target.files[0])
     }
-  return (
+
     
+  return (
       <Layout sidebar>
         <Container>
             <Row>
@@ -93,13 +89,12 @@ const Category = (props) => {
             </Row>
         </Container>
 
-        <Modal show={show} onHide={handleClose}>
-            <Modal.Header closeButton>
-                <Modal.Title>Add New Category</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                
-                <Input
+        <Modal 
+            show={show} 
+            handleClose={handleClose}
+            modalTitle={'Add New Category'}    
+        >
+             <Input
                     value = {categoryName}
                     placeholder={'Category Name'}
                     onChange = {(e) => setCategoryName(e.target.value)}
@@ -111,20 +106,9 @@ const Category = (props) => {
                         ))
                     }
                 </select>
-
                 <input type="file" name="categoryImage" onChange={handleCategoryImage} />
-            </Modal.Body>
-            <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>
-                    Close
-                </Button>
-                <Button variant="primary" onClick={handleClose}>
-                    Save Changes
-                </Button>
-            </Modal.Footer>
         </Modal>
       </Layout>
-
   )
 }
 
