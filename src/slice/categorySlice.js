@@ -5,7 +5,7 @@ export const getAllCategory = createAsyncThunk(
     'categorySlice/getAllCategory',
     async () => {
         const res = await axios.get(`category/getcategory`)
-
+        console.log(res)
         return res.data
     }
 )

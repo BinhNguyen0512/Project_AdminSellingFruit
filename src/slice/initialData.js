@@ -9,8 +9,8 @@ export const getInitialData =  createAsyncThunk(
     async() => {
         const res = await axios.post(`/initialData`)
         const {categories, products} = res.data;
-        console.log(categories)
-        console.log(products)
+        // console.log(categories)
+        // console.log(products)
         // const dispatch = useDispatch()
         // dispatch(getInitialCategory())
         // dispatch()

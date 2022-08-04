@@ -179,7 +179,7 @@ const Products = () => {
       <Modal
         show={show}
         handleClose={handleClose}
-        modalTitle={'Add New Category'}
+        modalTitle={'Add New Product'}
       >
 
         <Input

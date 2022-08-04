@@ -14,6 +14,7 @@ const Category = (props) => {
     const [parentCategoryId, setParentCategoryId] = useState()
     const [categoryImage, setCategoryImage] = useState()
     useEffect(() => {
+        // dispatch(getAllCategory())
     }, [])
     
     const renderCategories = (categoriesList) => {
